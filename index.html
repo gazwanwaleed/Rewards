@@ -5,38 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Belöningar</title>
     <style>
-        /* Grundstyling */
         body { font-family: 'Segoe UI', sans-serif; background-color: #1a1a2e; color: #fff; display: flex; justify-content: center; padding: 20px; min-height: 100vh; margin: 0; }
         .card { background: #16213e; border-radius: 20px; padding: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); width: 100%; max-width: 400px; text-align: center; border: 2px solid #e94560; height: fit-content; }
         .hidden { display: none; }
         h1 { color: #e94560; margin: 0 0 10px 0; font-size: 1.8rem; }
         p { color: #95a5a6; font-size: 0.9rem; }
-
-        /* Login */
         input { background: #0f3460; border: 2px solid #533483; color: white; padding: 12px; border-radius: 10px; width: 80%; font-size: 1.2rem; text-align: center; margin-bottom: 20px; outline: none; }
         .btn { background: #e94560; color: white; border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
         .btn:hover { transform: scale(1.05); background: #ff5e78; }
-
-        /* Stats */
         .stat-container { display: flex; justify-content: space-around; margin: 20px 0; }
         .stat-box { background: #0f3460; padding: 10px; border-radius: 12px; width: 42%; border-bottom: 3px solid #e94560; }
         .stat-label { font-size: 0.7rem; color: #e94560; text-transform: uppercase; }
         .stat-value { font-size: 1.5rem; font-weight: bold; display: block; }
-
-        /* XP Bar */
         .xp-bar-container { background: #0f3460; border-radius: 15px; height: 18px; width: 100%; margin: 10px 0; overflow: hidden; border: 1px solid #533483; }
         .xp-bar-fill { background: linear-gradient(90deg, #e94560, #ff5e78); height: 100%; width: 0%; transition: width 2s ease-out; }
-
-        /* --- SHOP SEKTION --- */
         .shop-container { margin-top: 30px; text-align: left; border-top: 1px solid #533483; padding-top: 20px; }
-        .shop-title { color: #e94560; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        
-        .reward-item { background: #0f3460; padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #533483; transition: 0.3s; }
-        .reward-item.affordable { border-left-color: #2ecc71; } /* Grön kant om man har råd */
-        
-        .reward-info { display: flex; flex-direction: column; }
-        .reward-name { font-weight: bold; font-size: 0.95rem; }
-        .reward-cost { font-size: 0.8rem; color: #95a5a6; }
+        .shop-title { color: #e94560; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
+        .reward-item { background: #0f3460; padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #533483; }
+        .reward-item.affordable { border-left-color: #2ecc71; }
+        .reward-name { font-weight: bold; font-size: 0.95rem; display: block; }
+        .reward-status { font-size: 0.75rem; color: #95a5a6; }
         .cost-tag { background: #1a1a2e; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; color: #e94560; }
     </style>
 </head>
@@ -44,70 +32,68 @@
 
     <div class="card" id="login-screen">
         <h1>Logga in</h1>
-        <p>Ange din kod för att se din progress</p>
+        <p>Ange din kod för att se dina belöningar</p>
         <input type="password" id="hero-code" placeholder="****">
         <br>
         <button class="btn" onclick="login()">Logga in</button>
     </div>
 
     <div class="card hidden" id="dashboard">
-        <h1 id="hero-name">Hemlig agent</h1>
+        <h1 id="hero-name">Elev</h1>
         <div class="stat-container">
             <div class="stat-box">
                 <span class="stat-label">Level</span>
                 <span class="stat-value" id="lvl-val">1</span>
             </div>
             <div class="stat-box">
-                <span class="stat-label">XP Poäng</span>
+                <span class="stat-label">XP</span>
                 <span class="stat-value" id="xp-val">0</span>
             </div>
         </div>
-
         <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-bar"></div></div>
 
         <div class="shop-container">
-            <div class="shop-title">🎁 Belöningsbutik</div>
-            <div id="rewards-list">
-                </div>
+            <div class="shop-title">🎁 Dina belöningar</div>
+            <div id="rewards-list"></div>
         </div>
-
         <br>
-        <button class="btn" onclick="location.reload()" style="background: #533483; padding: 8px 15px; font-size: 0.8rem;">Logga ut</button>
+        <button class="btn" onclick="location.reload()" style="background: #533483; font-size: 0.7rem;">Logga ut</button>
     </div>
 
     <script>
         const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv';
 
-        // Här kan du enkelt lägga till eller ändra belöningar
+        // BELÖNINGARNA ÄNDRAS HÄR:
         const rewards = [
-            { name: "5 min extra rast", cost: 200 },
-            { name: "Lyssna på musik", cost: 350 },
-            { name: "Byta sittplats 1 lektion", cost: 500 },
-            { name: "Spela spel sista 15 min", cost: 800 },
-            { name: "Skippa en läxa", cost: 1500 }
+            { name: "5 min extra rast", cost: 250, cat: "Allmänt" },
+            { name: "Kolla på Youtube", cost: 250, cat: "Tage" },
+            { name: "Sitta inne en rast", cost: 250, cat: "Tage" },
+            { name: "Slippa anteckna Stjärnklart", cost: 375, cat: "Ioannis" },
+            { name: "Multiplikationsspel 15 min", cost: 375, cat: "Fokus" },
+            { name: "Slippa gå till lilla studion 1 gång", cost: 375, cat: "Maja" },
+            { name: "Hemlig överraskning!", cost: 1875, cat: "Allmänt" } // Syns bara för eleven som heter Elias
         ];
 
         async function login() {
             const inputCode = document.getElementById('hero-code').value.trim();
             try {
                 const response = await fetch(`${sheetUrl}&cb=${Math.random()}`);
-                const csvData = await response.text();
-                const rows = csvData.replace(/^\uFEFF/, "").split('\n').map(row => row.split(','));
-                const studentData = rows.find(r => r[0].replace(/"/g, "").trim() === inputCode);
+                const data = await response.text();
+                const rows = data.replace(/^\uFEFF/, "").split('\n').map(r => r.split(','));
+                const student = rows.find(r => r[0].replace(/"/g, "").trim() === inputCode);
 
-                if (studentData) {
-                    displayHero(studentData);
+                if (student) {
+                    const studentName = student[1].replace(/"/g, "").trim();
+                    const studentCat = student[4] ? student[4].replace(/"/g, "").trim() : "Allmänt";
+                    displayHero(student, studentName, studentCat);
                 } else {
                     alert("Fel kod!");
                 }
-            } catch (error) {
-                alert("Kunde inte hämta data!");
-            }
+            } catch (e) { alert("Fel vid hämtning!"); }
         }
 
-        function displayHero(data) {
-            const name = data[1].replace(/"/g, "").trim();
-            const xp = parseInt(data[2].replace(/"/g, "").trim()) || 0;
+        function displayHero(data, name, category) {
+            const xp = parseInt(data[2].replace(/"/g, "")) || 0;
             const lvl = data[3].replace(/"/g, "").trim();
 
             document.getElementById('login-screen').classList.add('hidden');
@@ -115,27 +101,27 @@
             document.getElementById('hero-name').innerText = name.toUpperCase();
             document.getElementById('xp-val').innerText = xp;
             document.getElementById('lvl-val').innerText = lvl;
-
-            // XP Bar logik
+            
             let progress = (xp % 1000) / 10;
             setTimeout(() => { document.getElementById('xp-bar').style.width = progress + "%"; }, 300);
 
-            // Skapa belöningslistan
-            const listContainer = document.getElementById('rewards-list');
-            listContainer.innerHTML = ""; // Rensa om det fanns nåt innan
-
+            const list = document.getElementById('rewards-list');
+            list.innerHTML = "";
+            
             rewards.forEach(item => {
-                const canAfford = xp >= item.cost;
-                const div = document.createElement('div');
-                div.className = `reward-item ${canAfford ? 'affordable' : ''}`;
-                div.innerHTML = `
-                    <div class="reward-info">
-                        <span class="reward-name">${item.name}</span>
-                        <span class="reward-cost">${canAfford ? '✅ Du har råd!' : '🔒 Fortsätt kämpa!'}</span>
-                    </div>
-                    <div class="cost-tag">${item.cost} XP</div>
-                `;
-                listContainer.appendChild(div);
+                // VISA OM: Det är Allmänt ELLER kategorin matchar ELLER namnet matchar exakt
+                if (item.cat === "Allmänt" || item.cat === category || item.cat === name) {
+                    const affordable = xp >= item.cost;
+                    const div = document.createElement('div');
+                    div.className = `reward-item ${affordable ? 'affordable' : ''}`;
+                    div.innerHTML = `
+                        <div>
+                            <span class="reward-name">${item.name}</span>
+                            <span class="reward-status">${affordable ? '✅ Du har råd!' : '🔒 Fortsätt kämpa'}</span>
+                        </div>
+                        <div class="cost-tag">${item.cost} XP</div>`;
+                    list.appendChild(div);
+                }
             });
         }
     </script>
