@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quest Log - Level Up</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1a1a2e;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: #16213e;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            border: 2px solid #e94560;
+            transition: all 0.3s ease;
+        }
+
+        .hidden { display: none; }
+
+        h1 { color: #e94560; margin-bottom: 10px; font-size: 2rem; text-shadow: 2px 2px #000; }
+        p { color: #95a5a6; margin-bottom: 20px; }
+
+        input {
+            background: #0f3460;
+            border: 2px solid #533483;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            width: 80%;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            outline: none;
+            letter-spacing: 5px;
+        }
+
+        input:focus { border-color: #e94560; box-shadow: 0 0 10px #e94560; }
+
+        .btn {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn:hover { background: #ff5e78; transform: scale(1.05); }
+        .btn:disabled { background: #555; cursor: not-allowed; }
+
+        .stat-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 12px;
+            width: 40%;
+            border-bottom: 3px solid #e94560;
+        }
+
+        .stat-label { font-size: 0.7rem; color: #e94560; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .stat-value { font-size: 1.8rem; font-weight: bold; display: block; color: #fff; }
+
+        .xp-bar-container {
+            background: #0f3460;
+            border-radius: 15px;
+            height: 25px;
+            width: 100%;
+            margin-top: 10px;
+            overflow: hidden;
+            border: 1px solid #533483;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .xp-bar-fill {
+            background: linear-gradient(90deg, #e94560, #ff5e78);
+            height: 100%;
+            width: 0%;
+            transition: width 2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        .status-msg { font-size: 0.8rem; margin-top: 10px; color: #e94560; height: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="login-screen">
+        <h1>QUEST LOG</h1>
+        <p>Ange din hemliga Hero-Code för att se din progress</p>
+        <input type="password" id="hero-code" placeholder="****" maxlength="6">
+        <br>
+        <button class="btn" id="login-btn" onclick="login()">Logga in</button>
+        <div id="status" class="status-msg"></div>
+    </div>
+
+    <div class="card hidden" id="dashboard">
+        <h1 id="hero-name">HERO</h1>
+        <p>Ditt äventyr fortsätter...</p>
+
+        <div class="stat-container">
+            <div class="stat-box">
+                <span class="stat-label">Level</span>
+                <span class="stat-value" id="lvl-val">1</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-label">XP Poäng</span>
+                <span class="stat-value" id="xp-val">0</span>
+            </div>
+        </div>
+
+        <div style="text-align: left; font-size: 0.8rem; color: #95a5a6; margin-left: 5px; margin-bottom: 5px;">Progress till nästa Level</div>
+        <div class="xp-bar-container">
+            <div class="xp-bar-fill" id="xp-bar"></div>
+        </div>
+
+        <br><br>
+        <button class="btn" onclick="location.reload()" style="background: #533483;">Logga ut</button>
+    </div>
+
+    <script>
+        const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv';
+
+        async function login() {
+            const codeInput = document.getElementById('hero-code');
+            const loginBtn = document.getElementById('login-btn');
+            const status = document.getElementById('status');
+            const inputCode = codeInput.value.trim();
+
+            if (!inputCode) {
+                status.innerText = "Du måste skriva in en kod!";
+                return;
+            }
+
+            // Visuellt kvitto på att vi försöker logga in
+            loginBtn.disabled = true;
+            loginBtn.innerText = "Laddar...";
+            status.innerText = "Hämtar data från molnet...";
+
+            try {
+                // Vi lägger till en slumpmässig siffra (cachebuster) så att Google inte ger oss gamla poäng
+                const finalUrl = `${sheetUrl}&cb=${Math.random()}`;
+                
+                const response = await fetch(finalUrl);
+                if (!response.ok) throw new Error();
+                
+                const csvData = await response.text();
+                
+                // Fixar osynliga tecken och delar upp rader
+                const cleanData = csvData.replace(/^\uFEFF/, "");
+                const rows = cleanData.split('\n').map(row => row.split(','));
+
+                // Vi letar efter koden i kolumn A (index 0)
+                // Vi rensar bort eventuella citattecken (") som Google ibland sätter runt text
+                const studentData = rows.find(r => r[0].replace(/"/g, "").trim() === inputCode);
+
+                if (studentData) {
+                    displayHero(studentData);
+                } else {
+                    status.innerText = "Koden hittades inte!";
+                    loginBtn.disabled = false;
+                    loginBtn.innerText = "Logga in";
+                }
+            } catch (error) {
+                console.error(error);
+                status.innerText = "Kunde inte hämta data. Kolla nätet!";
+                loginBtn.disabled = false;
+                loginBtn.innerText = "Logga in";
+            }
+        }
+
+        function displayHero(data) {
+            // Data ordning i ditt Sheet: 0:Kod, 1:Namn, 2:XP, 3:Level
+            const name = data[1].replace(/"/g, "").trim();
+            const xp = parseInt(data[2].replace(/"/g, "").trim()) || 0;
+            const lvl = data[3].replace(/"/g, "").trim();
+
+            document.getElementById('login-screen').classList.add('hidden');
+            const dash = document.getElementById('dashboard');
+            dash.classList.remove('hidden');
+
+            document.getElementById('hero-name').innerText = name.toUpperCase();
+            document.getElementById('xp-val').innerText = xp;
+            document.getElementById('lvl-val').innerText = lvl;
+
+            // Beräkna hur full XP-baren ska vara. 
+            // Här räknar vi att man behöver 1000 XP per level för att baren ska bli full.
+            let progress = (xp % 1000) / 10;
+            if (progress === 0 && xp > 0) progress = 100; // Om man är exakt på en jämn nivå
+
+            setTimeout(() => {
+                document.getElementById('xp-bar').style.width = progress + "%";
+            }, 300);
+        }
+    </script>
+</body>
+</html>
