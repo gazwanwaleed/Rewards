@@ -1,171 +1,178 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Belöningar</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #1a1a2e;
-            color: #fff;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            min-height: 100vh;
-            margin: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Belöningar</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #1a1a2e;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        min-height: 100vh;
+        margin: 0;
+    }
 
-        .card {
-            background: #16213e;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border: 2px solid #e94560;
-        }
+    .card {
+        background: #16213e;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        border: 2px solid #e94560;
+    }
 
-        .hidden { display: none; }
+    .hidden { display: none; }
 
-        h1 {
-            color: #e94560;
-            margin-bottom: 10px;
-            font-size: 1.8rem;
-        }
+    h1 {
+        color: #e94560;
+        margin-bottom: 10px;
+        font-size: 1.8rem;
+    }
 
-        p {
-            color: #95a5a6;
-            font-size: 0.9rem;
-        }
+    p {
+        color: #95a5a6;
+        font-size: 0.9rem;
+    }
 
-        input {
-            background: #0f3460;
-            border: 2px solid #533483;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            width: 80%;
-            font-size: 1.2rem;
-            text-align: center;
-            margin-bottom: 20px;
-            outline: none;
-        }
+    input {
+        background: #0f3460;
+        border: 2px solid #533483;
+        color: white;
+        padding: 12px;
+        border-radius: 10px;
+        width: 80%;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 20px;
+        outline: none;
+    }
 
-        .btn {
-            background: #e94560;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: 0.2s;
-        }
+    .btn {
+        background: #e94560;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: 0.2s;
+    }
 
-        .btn:hover {
-            transform: scale(1.05);
-            background: #ff5e78;
-        }
+    .btn:hover {
+        transform: scale(1.05);
+        background: #ff5e78;
+    }
 
-        .stat-container {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-        }
+    .stat-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+    }
 
-        .stat-box {
-            background: #0f3460;
-            padding: 10px;
-            border-radius: 12px;
-            width: 42%;
-            border-bottom: 3px solid #e94560;
-        }
+    .stat-box {
+        background: #0f3460;
+        padding: 10px;
+        border-radius: 12px;
+        width: 42%;
+        border-bottom: 3px solid #e94560;
+    }
 
-        .stat-label {
-            font-size: 0.7rem;
-            color: #e94560;
-            text-transform: uppercase;
-        }
+    .stat-label {
+        font-size: 0.7rem;
+        color: #e94560;
+        text-transform: uppercase;
+    }
 
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
 
-        .xp-bar-container {
-            background: #0f3460;
-            border-radius: 15px;
-            height: 18px;
-            width: 100%;
-            margin: 10px 0;
-            overflow: hidden;
-            border: 1px solid #533483;
-        }
+    .xp-bar-container {
+        background: #0f3460;
+        border-radius: 15px;
+        height: 18px;
+        width: 100%;
+        margin: 10px 0;
+        overflow: hidden;
+        border: 1px solid #533483;
+    }
 
-        .xp-bar-fill {
-            background: linear-gradient(90deg, #e94560, #ff5e78);
-            height: 100%;
-            width: 0%;
-            transition: width 0.6s ease;
-        }
+    .xp-bar-fill {
+        background: linear-gradient(90deg, #e94560, #ff5e78);
+        height: 100%;
+        width: 0%;
+        transition: width 0.6s ease;
+    }
 
-        .shop-container {
-            margin-top: 30px;
-            text-align: left;
-            border-top: 1px solid #533483;
-            padding-top: 20px;
-        }
+    .shop-container {
+        margin-top: 30px;
+        text-align: left;
+        border-top: 1px solid #533483;
+        padding-top: 20px;
+    }
 
-        .shop-title {
-            color: #e94560;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
+    .shop-title {
+        color: #e94560;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
 
-        .reward-item {
-            background: #0f3460;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #533483;
-        }
+    .reward-item {
+        background: #0f3460;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-left: 4px solid #533483;
+        transition: 0.2s;
+    }
 
-        .reward-item.affordable {
-            border-left-color: #2ecc71;
-            cursor: pointer;
-        }
+    .reward-item.affordable {
+        border-left-color: #2ecc71;
+        cursor: pointer;
+    }
 
-        .reward-item.affordable:hover {
-            transform: scale(1.02);
-            background: #14325a;
-        }
+    .reward-item.affordable:hover {
+        transform: scale(1.02);
+        background: #14325a;
+    }
 
-        .reward-name {
-            font-weight: bold;
-            font-size: 0.95rem;
-        }
+    .reward-item.locked {
+        opacity: 0.45;
+        filter: grayscale(0.6);
+        cursor: not-allowed;
+    }
 
-        .reward-status {
-            font-size: 0.75rem;
-            color: #95a5a6;
-        }
+    .reward-name {
+        font-weight: bold;
+        font-size: 0.95rem;
+    }
 
-        .cost-tag {
-            background: #1a1a2e;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: #e94560;
-        }
-    </style>
+    .reward-status {
+        font-size: 0.75rem;
+        color: #95a5a6;
+    }
+
+    .cost-tag {
+        background: #1a1a2e;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: bold;
+        color: #e94560;
+    }
+</style>
 </head>
 <body>
 
@@ -179,7 +186,6 @@
 
 <div class="card hidden" id="dashboard">
     <h1 id="hero-name">Elev</h1>
-
     <div class="stat-container">
         <div class="stat-box">
             <div class="stat-label">Level</div>
@@ -190,7 +196,6 @@
             <div class="stat-value" id="xp-val">0</div>
         </div>
     </div>
-
     <div class="xp-bar-container">
         <div class="xp-bar-fill" id="xp-bar"></div>
     </div>
@@ -205,13 +210,9 @@
 </div>
 
 <script>
-const sheetUrl =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv";
+const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv";
+const updateXpUrl = "https://script.google.com/macros/s/AKfycbyIX0kT_qcBgKMvY4Ou0JeUZuIiktYexQtq_Op2O0VcesCGlYIbWVs59Y7pz49Q6XURZg/exec";
 
-const updateXpUrl =
-  "https://script.google.com/macros/s/AKfycbyIX0kT_qcBgKMvY4Ou0JeUZuIiktYexQtq_Op2O0VcesCGlYIbWVs59Y7pz49Q6XURZg/exec";
-
-// BELÖNINGAR
 const rewards = [
     { name: "5 min extra rast", cost: 375, cat: "Allmänt" },
     { name: "Kolla på Youtube", cost: 1250, cat: "Allmänt" },
@@ -225,11 +226,9 @@ const rewards = [
 
 async function login() {
     const code = document.getElementById("hero-code").value.trim();
-
     const res = await fetch(sheetUrl + "&cb=" + Math.random());
     const text = await res.text();
     const rows = text.replace(/^\uFEFF/, "").split("\n").map(r => r.split(","));
-
     const student = rows.find(r => r[0].replace(/"/g,"").trim() === code);
     if (!student) return alert("Fel kod!");
 
@@ -250,8 +249,7 @@ function displayHero(xp, lvl, name, category) {
     document.getElementById("hero-name").innerText = name.toUpperCase();
     document.getElementById("xp-val").innerText = xp;
     document.getElementById("lvl-val").innerText = lvl;
-
-    document.getElementById("xp-bar").style.width = (xp % 1000) / 10 + "%";
+    document.getElementById("xp-bar").style.width = (xp % 1000)/10 + "%";
 
     const list = document.getElementById("rewards-list");
     list.innerHTML = "";
@@ -262,12 +260,12 @@ function displayHero(xp, lvl, name, category) {
 
         const affordable = xp >= item.cost;
         const div = document.createElement("div");
-        div.className = "reward-item" + (affordable ? " affordable" : "");
+        div.className = "reward-item " + (affordable ? "affordable" : "locked");
         div.innerHTML = `
             <div>
                 <div class="reward-name">${item.name}</div>
                 <div class="reward-status">
-                    ${affordable ? "🟢 Klicka för att köpa" : "🔒 Fortsätt kämpa"}
+                    ${affordable ? "🟢 Klicka för att köpa" : `🔒 Låst – saknar ${item.cost - xp} XP`}
                 </div>
             </div>
             <div class="cost-tag">${item.cost} XP</div>
@@ -277,19 +275,21 @@ function displayHero(xp, lvl, name, category) {
             div.onclick = async () => {
                 if (!confirm(`Vill du använda ${item.cost} XP för:\n\n${item.name}?`)) return;
 
-                const res = await fetch(updateXpUrl, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        code: window.currentStudentCode,
-                        cost: item.cost,
-                        reward: item.name
-                    })
-                });
-
-                const result = await res.json();
-                if (!result.success) return alert("Något gick fel");
-
-                displayHero(result.xp, lvl, name, category);
+                try {
+                    const res = await fetch(updateXpUrl, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            code: window.currentStudentCode,
+                            cost: item.cost,
+                            reward: item.name
+                        })
+                    });
+                    const result = await res.json();
+                    if (!result.success) return alert("Något gick fel");
+                    displayHero(result.xp, lvl, name, category);
+                } catch(e) {
+                    alert("Kunde inte kontakta Google Sheet");
+                }
             };
         }
 
