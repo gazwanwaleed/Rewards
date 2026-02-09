@@ -5,173 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Belöningar</title>
 <style>
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        background-color: #1a1a2e;
-        color: #fff;
-        display: flex;
-        justify-content: center;
-        padding: 20px;
-        min-height: 100vh;
-        margin: 0;
-    }
-
-    .card {
-        background: #16213e;
-        border-radius: 20px;
-        padding: 25px;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-        border: 2px solid #e94560;
-    }
-
-    .hidden { display: none; }
-
-    h1 {
-        color: #e94560;
-        margin-bottom: 10px;
-        font-size: 1.8rem;
-    }
-
-    p {
-        color: #95a5a6;
-        font-size: 0.9rem;
-    }
-
-    input {
-        background: #0f3460;
-        border: 2px solid #533483;
-        color: white;
-        padding: 12px;
-        border-radius: 10px;
-        width: 80%;
-        font-size: 1.2rem;
-        text-align: center;
-        margin-bottom: 20px;
-        outline: none;
-    }
-
-    .btn {
-        background: #e94560;
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-weight: bold;
-        text-transform: uppercase;
-        transition: 0.2s;
-    }
-
-    .btn:hover {
-        transform: scale(1.05);
-        background: #ff5e78;
-    }
-
-    .stat-container {
-        display: flex;
-        justify-content: space-around;
-        margin: 20px 0;
-    }
-
-    .stat-box {
-        background: #0f3460;
-        padding: 10px;
-        border-radius: 12px;
-        width: 42%;
-        border-bottom: 3px solid #e94560;
-    }
-
-    .stat-label {
-        font-size: 0.7rem;
-        color: #e94560;
-        text-transform: uppercase;
-    }
-
-    .stat-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
-
-    .xp-bar-container {
-        background: #0f3460;
-        border-radius: 15px;
-        height: 18px;
-        width: 100%;
-        margin: 10px 0;
-        overflow: hidden;
-        border: 1px solid #533483;
-    }
-
-    .xp-bar-fill {
-        background: linear-gradient(90deg, #e94560, #ff5e78);
-        height: 100%;
-        width: 0%;
-        transition: width 0.6s ease;
-    }
-
-    .shop-container {
-        margin-top: 30px;
-        text-align: left;
-        border-top: 1px solid #533483;
-        padding-top: 20px;
-    }
-
-    .shop-title {
-        color: #e94560;
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 15px;
-    }
-
-    .reward-item {
-        background: #0f3460;
-        padding: 12px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-left: 4px solid #533483;
-        transition: 0.2s;
-    }
-
-    .reward-item.affordable {
-        border-left-color: #2ecc71;
-        cursor: pointer;
-    }
-
-    .reward-item.affordable:hover {
-        transform: scale(1.02);
-        background: #14325a;
-    }
-
-    .reward-item.locked {
-        opacity: 0.45;
-        filter: grayscale(0.6);
-        cursor: not-allowed;
-    }
-
-    .reward-name {
-        font-weight: bold;
-        font-size: 0.95rem;
-    }
-
-    .reward-status {
-        font-size: 0.75rem;
-        color: #95a5a6;
-    }
-
-    .cost-tag {
-        background: #1a1a2e;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        color: #e94560;
-    }
+    body { font-family: 'Segoe UI', sans-serif; background-color: #1a1a2e; color: #fff; display:flex; justify-content:center; padding:20px; min-height:100vh; margin:0;}
+    .card { background:#16213e; border-radius:20px; padding:25px; box-shadow:0 15px 35px rgba(0,0,0,0.6); width:100%; max-width:400px; text-align:center; border:2px solid #e94560;}
+    .hidden { display:none; }
+    h1 { color:#e94560; margin-bottom:10px; font-size:1.8rem; }
+    p { color:#95a5a6; font-size:0.9rem; }
+    input { background:#0f3460; border:2px solid #533483; color:white; padding:12px; border-radius:10px; width:80%; font-size:1.2rem; text-align:center; margin-bottom:20px; outline:none; }
+    .btn { background:#e94560; color:white; border:none; padding:12px 25px; border-radius:10px; cursor:pointer; font-weight:bold; text-transform:uppercase; transition:0.2s;}
+    .btn:hover { transform:scale(1.05); background:#ff5e78; }
+    .stat-container { display:flex; justify-content:space-around; margin:20px 0; }
+    .stat-box { background:#0f3460; padding:10px; border-radius:12px; width:42%; border-bottom:3px solid #e94560; }
+    .stat-label { font-size:0.7rem; color:#e94560; text-transform:uppercase; }
+    .stat-value { font-size:1.5rem; font-weight:bold; }
+    .xp-bar-container { background:#0f3460; border-radius:15px; height:18px; width:100%; margin:10px 0; overflow:hidden; border:1px solid #533483; }
+    .xp-bar-fill { background:linear-gradient(90deg,#e94560,#ff5e78); height:100%; width:0%; transition:0.6s ease; }
+    .shop-container { margin-top:30px; text-align:left; border-top:1px solid #533483; padding-top:20px; }
+    .shop-title { color:#e94560; font-size:1.2rem; font-weight:bold; margin-bottom:15px; }
+    .reward-item { background:#0f3460; padding:12px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid #533483; transition:0.2s;}
+    .reward-item.affordable { border-left-color:#2ecc71; cursor:pointer; }
+    .reward-item.affordable:hover { transform:scale(1.02); background:#14325a; }
+    .reward-item.locked { opacity:0.45; filter:grayscale(0.6); cursor:not-allowed; }
+    .reward-name { font-weight:bold; font-size:0.95rem; }
+    .reward-status { font-size:0.75rem; color:#95a5a6; }
+    .cost-tag { background:#1a1a2e; padding:4px 8px; border-radius:6px; font-size:0.85rem; font-weight:bold; color:#e94560; }
 </style>
 </head>
 <body>
@@ -196,9 +52,7 @@
             <div class="stat-value" id="xp-val">0</div>
         </div>
     </div>
-    <div class="xp-bar-container">
-        <div class="xp-bar-fill" id="xp-bar"></div>
-    </div>
+    <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-bar"></div></div>
 
     <div class="shop-container">
         <div class="shop-title">🎁 Dina belöningar</div>
@@ -219,8 +73,8 @@ const rewards = [
     { name: "Slippa anteckna Stjärnklart", cost: 375, cat: "Allmänt" },
     { name: "Ta det lugnt på min plats", cost: 375, cat: "Allmänt" },
     { name: "Multiplikationsspel 15 min", cost: 375, cat: "Allmänt" },
-    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja" },
-    { name: "Kolla på Youtube", cost: 1250, cat: "Allmänt" },
+    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja, Allmänt" },
+    { name: "Kolla på Youtube 15 min", cost: 1250, cat: "Allmänt" },
     { name: "Hemlig överraskning!", cost: 1875, cat: "Allmänt" }
 ];
 
@@ -236,7 +90,7 @@ async function login() {
 
     const name = student[1].replace(/"/g,"").trim();
     const xp = parseInt(student[2]) || 0;
-    const lvl = student[3];
+    const lvl = parseInt(student[3]) || 1;
     const category = student[4] ? student[4].replace(/"/g,"").trim() : "Allmänt";
 
     displayHero(xp, lvl, name, category);
@@ -274,7 +128,6 @@ function displayHero(xp, lvl, name, category) {
         if (affordable) {
             div.onclick = async () => {
                 if (!confirm(`Vill du använda ${item.cost} XP för:\n\n${item.name}?`)) return;
-
                 try {
                     const res = await fetch(updateXpUrl, {
                         method: "POST",
@@ -286,7 +139,7 @@ function displayHero(xp, lvl, name, category) {
                     });
                     const result = await res.json();
                     if (!result.success) return alert("Något gick fel");
-                    displayHero(result.xp, lvl, name, category);
+                    displayHero(result.xp, result.level, name, category);
                 } catch(e) {
                     alert("Kunde inte kontakta Google Sheet");
                 }
@@ -300,4 +153,3 @@ function displayHero(xp, lvl, name, category) {
 
 </body>
 </html>
-
