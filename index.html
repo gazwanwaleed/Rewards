@@ -211,17 +211,17 @@
 
 <script>
 const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv";
-const updateXpUrl = "https://script.google.com/macros/s/AKfycbyIX0kT_qcBgKMvY4Ou0JeUZuIiktYexQtq_Op2O0VcesCGlYIbWVs59Y7pz49Q6XURZg/exec";
+const updateXpUrl = "https://script.google.com/macros/s/AKfycbxGA1vx2Cr2Fkz68fkh6MArxF74ZpWVQYvqBaTe00VmTQd1wwTAOK_1NS2cQ_nfigXM1w/exec";
 
 const rewards = [
     { name: "5 min extra rast", cost: 375, cat: "Allmänt" },
+    { name: "Kolla på Youtube", cost: 1250, cat: "Allmänt" },
     { name: "Sitta inne en rast", cost: 375, cat: "Allmänt" },
-    { name: "Slippa anteckna en Stjärnklart", cost: 375, cat: "Allmänt" },
+    { name: "Slippa anteckna Stjärnklart", cost: 375, cat: "Allmänt" },
     { name: "Ta det lugnt på min plats", cost: 375, cat: "Allmänt" },
     { name: "Multiplikationsspel 15 min", cost: 375, cat: "Allmänt" },
-    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja" },
-    { name: "Kolla på Youtube 15 min", cost: 1250, cat: "Allmänt" },
-    { name: "Hemlig överraskning!😮", cost: 1875, cat: "Allmänt" }
+    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja, Allmänt" },
+    { name: "Hemlig överraskning!", cost: 1875, cat: "Elias" }
 ];
 
 async function login() {
@@ -300,5 +300,3 @@ function displayHero(xp, lvl, name, category) {
 
 </body>
 </html>
-
-
