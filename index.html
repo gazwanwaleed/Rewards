@@ -45,7 +45,7 @@ input { background:#0f3460; border:2px solid #533483; color:white; padding:12px;
     <div class="stat-container">
         <div class="stat-box">
             <div class="stat-label">Level</div>
-            <div class="stat-value" id="lvl-val">1</div>
+            <div class="stat-value" id="lvl-val">0</div>
         </div>
         <div class="stat-box">
             <div class="stat-label">XP</div>
@@ -78,26 +78,6 @@ const rewards = [
     { name: "Hemlig överraskning!😱", cost: 1875, cat: "Allmänt" }
 ];
 
-function calculateLevel(xp){
-  xp = Number(xp)||0;
-  if(xp>=1875) return 15;
-  if(xp>=1750) return 14;
-  if(xp>=1625) return 13;
-  if(xp>=1500) return 12;
-  if(xp>=1375) return 11;
-  if(xp>=1250) return 10;
-  if(xp>=1125) return 9;
-  if(xp>=1000) return 8;
-  if(xp>=875) return 7;
-  if(xp>=750) return 6;
-  if(xp>=625) return 5;
-  if(xp>=500) return 4;
-  if(xp>=375) return 3;
-  if(xp>=250) return 2;
-  if(xp>=125) return 1;
-  return 0;
-}
-
 async function login() {
     const code = document.getElementById("hero-code").value.trim();
     const res = await fetch(sheetUrl + "&cb=" + Math.random());
@@ -110,7 +90,7 @@ async function login() {
 
     const name = student[1].replace(/"/g,"").trim();
     const xp = parseInt(student[2]) || 0;
-    let lvl = parseInt(student[3]) || calculateLevel(xp); // fallback om Sheet är tom
+    const lvl = parseInt(student[3]) || 0; // nu läser vi level direkt från Sheet, alltid ett tal
     const category = student[4] ? student[4].replace(/"/g,"").trim() : "Allmänt";
 
     displayHero(xp, lvl, name, category);
@@ -159,7 +139,14 @@ function displayHero(xp, lvl, name, category) {
                     });
                     const result = await res.json();
                     if (!result.success) return alert("Något gick fel.");
-                    displayHero(result.xp, result.level, name, category);
+
+                    // Läs level direkt från Sheet vid nästa inläsning
+                    const sheetRes = await fetch(sheetUrl + "&cb=" + Math.random());
+                    const sheetText = await sheetRes.text();
+                    const rows = sheetText.replace(/^\uFEFF/, "").split("\n").map(r => r.split(","));
+                    const student = rows.find(r => r[0].replace(/"/g,"").trim() === window.currentStudentCode);
+                    const newLvl = parseInt(student[3]) || 0;
+                    displayHero(result.xp, newLvl, name, category);
                 } catch(e) {
                     alert("Kunde inte kontakta Google Sheet. Prata med din lärare!");
                 }
