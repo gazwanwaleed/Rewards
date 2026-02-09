@@ -69,7 +69,7 @@ const rewards = [
     { name: "Slippa anteckna en Stjärnklart", cost: 375, cat: "Allmänt" },
     { name: "Ta det lugnt på min plats", cost: 375, cat: "Allmänt" },
     { name: "Multiplikationsspel 15 min", cost: 375, cat: "Allmänt" },
-    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja, Allmänt" },
+    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja" },
     { name: "Kolla på Youtube 15 min", cost: 1250, cat: "Allmänt" },
     { name: "Hemlig överraskning!😱", cost: 1875, cat: "Allmänt" }
 ];
@@ -97,14 +97,22 @@ function displayHero(xp, name, category) {
 
     document.getElementById("hero-name").innerText = name.toUpperCase();
     document.getElementById("xp-val").innerText = xp;
-    document.getElementById("xp-bar").style.width = Math.min(xp/20,100) + "%"; // max 100%
+
+    // ⚡ Dynamisk XP-bar baserat på högsta kostnad bland synliga belöningar
+    let visibleRewards = rewards.filter(item => {
+        const cats = item.cat.split(",").map(c => c.trim());
+        return cats.includes("Allmänt") || cats.includes(category) || cats.includes(name);
+    });
+    let maxCost = Math.max(...visibleRewards.map(r => r.cost), 1000);
+    document.getElementById("xp-bar").style.width = Math.min((xp / maxCost) * 100, 100) + "%";
 
     const list = document.getElementById("rewards-list");
     list.innerHTML = "";
 
-    rewards.forEach(item => {
+    visibleRewards.forEach(item => {
         const cats = item.cat.split(",").map(c => c.trim());
-        if (!(cats.includes("Allmänt") || cats.includes(category) || cats.includes(name))) return;
+        const isVisible = cats.includes("Allmänt") || cats.includes(category) || cats.includes(name);
+        if (!isVisible) return;
 
         const affordable = xp >= item.cost;
         const div = document.createElement("div");
@@ -132,8 +140,7 @@ function displayHero(xp, name, category) {
                         })
                     });
                     const result = await res.json();
-                    if (!result.success) return alert("Något gick fel.");
-
+                    if (!result.success) return alert(result.message || "Något gick fel.");
                     displayHero(result.xp, name, category);
                 } catch(e) {
                     alert("Kunde inte kontakta Google Sheet. Prata med din lärare!");
