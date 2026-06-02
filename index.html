@@ -1,157 +1,924 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Belöningar</title>
-<style>
-body { font-family: 'Segoe UI', sans-serif; background-color: #1a1a2e; color: #fff; display:flex; justify-content:center; padding:20px; min-height:100vh; margin:0;}
-.card { background:#16213e; border-radius:20px; padding:25px; box-shadow:0 15px 35px rgba(0,0,0,0.6); width:100%; max-width:400px; text-align:center; border:2px solid #e94560;}
-.hidden { display:none; }
-h1 { color:#e94560; margin-bottom:10px; font-size:1.8rem; }
-p { color:#95a5a6; font-size:0.9rem; }
-input { background:#0f3460; border:2px solid #533483; color:white; padding:12px; border-radius:10px; width:80%; font-size:1.2rem; text-align:center; margin-bottom:20px; outline:none; }
-.btn { background:#e94560; color:white; border:none; padding:12px 25px; border-radius:10px; cursor:pointer; font-weight:bold; text-transform:uppercase; transition:0.2s;}
-.btn:hover { transform:scale(1.05); background:#ff5e78; }
-.stat-container { display:flex; justify-content:space-around; margin:20px 0; }
-.stat-box { background:#0f3460; padding:10px; border-radius:12px; width:42%; border-bottom:3px solid #e94560; }
-.stat-label { font-size:0.7rem; color:#e94560; text-transform:uppercase; }
-.stat-value { font-size:1.5rem; font-weight:bold; }
-.xp-bar-container { background:#0f3460; border-radius:15px; height:18px; width:100%; margin:10px 0; overflow:hidden; border:1px solid #533483; }
-.xp-bar-fill { background:linear-gradient(90deg,#e94560,#ff5e78); height:100%; width:0%; transition:0.6s ease; }
-.shop-container { margin-top:30px; text-align:left; border-top:1px solid #533483; padding-top:20px; }
-.shop-title { color:#e94560; font-size:1.2rem; font-weight:bold; margin-bottom:15px; }
-.reward-item { background:#0f3460; padding:12px; border-radius:10px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-left:4px solid #533483; transition:0.2s;}
-.reward-item.affordable { border-left-color:#2ecc71; cursor:pointer; }
-.reward-item.affordable:hover { transform:scale(1.02); background:#14325a; }
-.reward-item.locked { opacity:0.45; filter:grayscale(0.6); cursor:not-allowed; }
-.reward-name { font-weight:bold; font-size:0.95rem; }
-.reward-status { font-size:0.75rem; color:#95a5a6; }
-.cost-tag { background:#1a1a2e; padding:4px 8px; border-radius:6px; font-size:0.85rem; font-weight:bold; color:#e94560; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Läsförståelsetest</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* Toppmeny för att välja test */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-buttons button {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .nav-buttons button.active {
+            background-color: #2ecc71;
+        }
+
+        .nav-buttons button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Layout för text och frågor */
+        .container {
+            display: none; /* Döljs som standard, visas via JS */
+            max-width: 1400px;
+            margin: 20px auto;
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .container.active {
+            display: flex;
+        }
+
+        /* Vänster kolumn: Texten */
+        .text-column {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        .text-column h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        /* Höger kolumn: Frågorna */
+        .quiz-column {
+            flex: 1;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .question-block {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border-left: 5px solid #3498db;
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .options-list li {
+            margin-bottom: 10px;
+        }
+
+        .options-list label {
+            display: block;
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #dcdde1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .options-list label:hover {
+            background: #f1f2f6;
+        }
+
+        .options-list input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* Student ID block på slutet */
+        .student-info-block {
+            background-color: #ebf5fb;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            border-left: 5px solid #2ecc71;
+        }
+
+        .student-info-block label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .student-info-block input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Navigeringsknappar och skicka-knapp */
+        .next-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .next-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .submit-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #27ae60;
+        }
+
+        /* Felmeddelande om man missat något */
+        .error-message {
+            color: #c0392b;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card" id="login-screen">
-    <h1>Logga in</h1>
-    <p>Ange din kod för att se dina belöningar</p>
-    <input type="password" id="hero-code" placeholder="****">
-    <br>
-    <button class="btn" onclick="login()">Logga in</button>
-</div>
-
-<div class="card hidden" id="dashboard">
-    <h1 id="hero-name">Elev</h1>
-    <div class="stat-container">
-        <div class="stat-box">
-            <div class="stat-label">XP</div>
-            <div class="stat-value" id="xp-val">0</div>
+    <header>
+        <h1>Läsförståelse</h1>
+        <div class="nav-buttons">
+            <button id="nav-l3" class="active" onclick="forceTabSwitch('l3')">Läs 3</button>
+            <button id="nav-l4" disabled onclick="forceTabSwitch('l4')">Läs 4</button>
         </div>
-    </div>
-    <div class="xp-bar-container"><div class="xp-bar-fill" id="xp-bar"></div></div>
+    </header>
 
-    <div class="shop-container">
-        <div class="shop-title">🎁 Dina belöningar</div>
-        <div id="rewards-list"></div>
-    </div>
+    <form id="mega-quiz-form">
 
-    <br>
-    <button class="btn" onclick="location.reload()" style="background:#533483;font-size:0.7rem;">Logga ut</button>
-</div>
-
-<script>
-const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrFn8zqTcXlK23eOdZSZcNvFRSMvlM8D9NwFxns5V9tOguvrrqXEczF_KEjGw9F7VqhADFC1k7763e/pub?output=csv";
-const updateXpUrl = "https://script.google.com/macros/s/AKfycbxGA1vx2Cr2Fkz68fkh6MArxF74ZpWVQYvqBaTe00VmTQd1wwTAOK_1NS2cQ_nfigXM1w/exec";
-
-const rewards = [
-    { name: "5 min extra rast", cost: 375, cat: "Allmänt" },
-    { name: "Sitta inne en rast", cost: 375, cat: "Allmänt" },
-    { name: "Slippa anteckna en Stjärnklart", cost: 375, cat: "Allmänt" },
-    { name: "Ta det lugnt på min plats", cost: 375, cat: "Allmänt" },
-    { name: "Multiplikationsspel 15 min", cost: 375, cat: "Allmänt" },
-    { name: "Slippa gå till lilla studion 1 gång", cost: 650, cat: "Maja" },
-    { name: "Kolla på Youtube 15 min", cost: 1250, cat: "Allmänt" },
-    { name: "Hemlig överraskning!😱", cost: 1875, cat: "Allmänt" }
-];
-
-async function login() {
-    const code = document.getElementById("hero-code").value.trim();
-    const res = await fetch(sheetUrl + "&cb=" + Math.random());
-    const text = await res.text();
-    const rows = text.replace(/^\uFEFF/, "").split("\n").map(r => r.split(","));
-    const student = rows.find(r => r[0].replace(/"/g,"").trim() === code);
-    if (!student) return alert("Fel kod!");
-
-    window.currentStudentCode = code;
-
-    const name = student[1].replace(/"/g,"").trim();
-    const xp = parseInt(student[2].replace(/"/g,"")) || 0;
-    const category = student[4] ? student[4].replace(/"/g,"").trim() : "Allmänt";
-
-    displayHero(xp, name, category);
-}
-
-function displayHero(xp, name, category) {
-    document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-
-    document.getElementById("hero-name").innerText = name.toUpperCase();
-    document.getElementById("xp-val").innerText = xp;
-
-    // ⚡ Dynamisk XP-bar baserat på högsta kostnad bland synliga belöningar
-    let visibleRewards = rewards.filter(item => {
-        const cats = item.cat.split(",").map(c => c.trim());
-        return cats.includes("Allmänt") || cats.includes(category) || cats.includes(name);
-    });
-    let maxCost = Math.max(...visibleRewards.map(r => r.cost), 1000);
-    document.getElementById("xp-bar").style.width = Math.min((xp / maxCost) * 100, 100) + "%";
-
-    const list = document.getElementById("rewards-list");
-    list.innerHTML = "";
-
-    visibleRewards.forEach(item => {
-        const cats = item.cat.split(",").map(c => c.trim());
-        const isVisible = cats.includes("Allmänt") || cats.includes(category) || cats.includes(name);
-        if (!isVisible) return;
-
-        const affordable = xp >= item.cost;
-        const div = document.createElement("div");
-        div.className = "reward-item " + (affordable ? "affordable" : "locked");
-        div.innerHTML = `
-            <div>
-                <div class="reward-name">${item.name}</div>
-                <div class="reward-status">
-                    ${affordable ? "🟢 Klicka för att köpa" : `🔒 Låst – saknar ${item.cost - xp} XP`}
-                </div>
+        <div class="container active" id="test-part-1">
+            <div class="text-column">
+                <h2>Text 1: Banan</h2>
+                <p>Vilken frukt är avlång, gul, god och mättande? Bananen!</p>
+                <p>I Sverige äter vi runt 100 bananer per person och år. Den är en av våra mest älskade frukter. Bananen är faktiskt en typ av bär. En del bananer kan vi äta, andra odlas för att vara fina. De bananer vi äter i Sverige kallas dessertbananer och smakar sött. De vanligaste bananerna kallas kokbananer. De är inte alls söta och kan inte ätas råa. Kokbananerna används i matlagning både med och utan skal.</p>
+                <p>Bananer växer i klasar som hänger ner från toppen av plantan. Det kan finnas 200 bananer i samma klase. När bananen mognar ändras färgen på skalet från grönt till gult, lila eller rött. En banan som är övermogen har ett brunt eller svart skal.</p>
+                <p>Bananplantor behöver mycket ljus och vatten för att växa. De bananer vi kan köpa i Sverige kommer oftast från Centralamerika eller Sydamerika.</p>
             </div>
-            <div class="cost-tag">${item.cost} XP</div>
-        `;
 
-        if (affordable) {
-            div.onclick = async () => {
-                if (!confirm(`Vill du använda ${item.cost} XP för:\n\n${item.name}?`)) return;
-                try {
-                    const res = await fetch(updateXpUrl, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            code: window.currentStudentCode,
-                            cost: item.cost,
-                            reward: item.name
-                        })
-                    });
-                    const result = await res.json();
-                    if (!result.success) return alert(result.message || "Något gick fel.");
-                    displayHero(result.xp, name, category);
-                } catch(e) {
-                    alert("Kunde inte kontakta Google Sheet. Prata med din lärare!");
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 1: Vad skiljer kokbananen från dessertbananen?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q1" value="A"> Kokbananer är inte gröna.</label></li>
+                        <li><label><input type="radio" name="q1" value="B"> Kokbananer växer inte i klasar.</label></li>
+                        <li><label><input type="radio" name="q1" value="C"> Man måste tillaga kokbananen för att äta den.</label></li>
+                        <li><label><input type="radio" name="q1" value="D"> Kokbananer odlas för att vara dekorativa.</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 2: Hur växer bananer?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q2" value="A"> Två och två i bananbusken.</label></li>
+                        <li><label><input type="radio" name="q2" value="B"> En och en på bärplantor.</label></li>
+                        <li><label><input type="radio" name="q2" value="C"> Hängande på grenar i bananträd.</label></li>
+                        <li><label><input type="radio" name="q2" value="D"> I klasar på bananplantor.</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 3: Vilka färger kan skalet på en mogen banan ha?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q3" value="A"> Lila och röd</label></li>
+                        <li><label><input type="radio" name="q3" value="B"> Brun och svart</label></li>
+                        <li><label><input type="radio" name="q3" value="C"> Röd och grön</label></li>
+                        <li><label><input type="radio" name="q3" value="D"> Grön och svart</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-1" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(1, ['q1', 'q2', 'q3'], 2)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-2">
+            <div class="text-column">
+                <h2>Text 2: Blåsippan</h2>
+                <p>Blåsippan växer i södra och mellersta Sverige. Den trivs bäst i lövskog, men man kan också hitta den i blandskog där det växer både lövträd och barrträd.</p>
+                <p>”Blåsippan ute i backarna står, niger och säger att nu är det vår”. Så går texten i Alice Tegnérs barnvisa. Hon tänkte nog på stjälkarna som böjde sig när hon skrev att de niger. När blåsippan har blommat färdigt på våren böjer den ner sina stjälkar mot marken. Det kommer myror som äter frukterna. I frukterna finns små frön som myrorna hjälper till att sprida. En blåsippsplanta kan bli flera hundra år gammal!</p>
+                <p>Den vackra blå färgen har gjort att människor gärna plockar blåsippor. Vissa gräver till och med upp hela plantan och tar med. Problemet är att blåsipporna nu börjar försvinna i Sverige. För att försöka rädda dem är de fridlysta i hela landet. Fridlysning betyder oftast att man varken får plocka eller gräva upp en växt. Blåsippan får man dock plocka i vissa delar av landet, men bara för att ta med sig hem.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 4: Hur sprider sig blåsippan?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q4" value="A"> De är fridlysta och sprider sig inte.</label></li>
+                        <li><label><input type="radio" name="q4" value="B"> Myror äter frukterna och sprider fröna.</label></li>
+                        <li><label><input type="radio" name="q4" value="C"> När man plockar dem och sätter i vatten.</label></li>
+                        <li><label><input type="radio" name="q4" value="D"> När man gräver upp dem och planterar.</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 5: Vad betyder blandskog?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q5" value="A"> Det växer blandade lövträd där.</label></li>
+                        <li><label><input type="radio" name="q5" value="B"> Det växer både gran och tall där.</label></li>
+                        <li><label><input type="radio" name="q5" value="C"> Det finns träd som har både löv och barr på samma träd.</label></li>
+                        <li><label><input type="radio" name="q5" value="D"> Det finns träd med löv och träd med barr där.</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 6: Vad betyder niga?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q6" value="A"> Att man böjer på benen</label></li>
+                        <li><label><input type="radio" name="q6" value="B"> Att man blommar</label></li>
+                        <li><label><input type="radio" name="q6" value="C"> Att man står upp</label></li>
+                        <li><label><input type="radio" name="q6" value="D"> Att det är vår</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-2" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(2, ['q4', 'q5', 'q6'], 3)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-3">
+            <div class="text-column">
+                <h2>Text 3: Honungsbin</h2>
+                <p>Bin tillhör de insekter som kallas gaddsteklar. Dit hör också myror och getingar. I Sverige finns det runt 270 olika arter av bin. Vildbin bor oftast helt ensamma i håligheter i träd, medan honungsbin bor i samhällen. Honung görs av nektar som honungsbin samlar in från blommor. I varje bisamhälle kan det bo tusentals bin. Ett av bina är lite större än de andra och kallas drottning. Drottningen är biet som lägger äggen som sedan blir nya bin.</p>
+                <p>När ett bi är vid en blomma fastnar lite av blommans pollen, ett fint pulver, på biets kropp. När biet flyger till nästa blomma hamnar en del pollen på den nya blomman. Det kallas att blomman pollineras. För att det ska bli frukt och bär krävs ofta att blommor blir pollinerade. En tredjedel av all mat som vi äter kommer från växter som har pollinerats av bin och andra insekter. Utan bin skulle det bli svårt att få tag på många frukter och grönsaker.</p>
+                <p>Tyvärr finns det många saker som hotar bina. De kan drabbas av sjukdomar och dö. Miljön de bor i är också viktig. De behöver tillgång till många olika blommor och träd för att överleva. Gifter som används för att få bort ogräs kan skada bin.</p>
+                <p>Två enkla saker vi kan göra för att hjälpa bina är att odla blommor utomhus och att inte använda gifter i naturen. Man kan också bygga bihotell till vildbin. Om vi hjälper bina så fortsätter de att hjälpa oss.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 7: Varför blir det mindre mat om bina försvinner?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q7" value="A"> Växterna blir förgiftade om bina försvinner</label></li>
+                        <li><label><input type="radio" name="q7" value="B"> Många av de frukter och grönsaker vi äter skulle inte finnas utan bin</label></li>
+                        <li><label><input type="radio" name="q7" value="C"> Ogräset skulle växa snabbare utan bin</label></li>
+                        <li><label><input type="radio" name="q7" value="D"> Vildbin bor ensamma och delar inte med sig av maten</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 8: Var brukar vildbin bo?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q8" value="A"> I gamla träd</label></li>
+                        <li><label><input type="radio" name="q8" value="B"> I blommor</label></li>
+                        <li><label><input type="radio" name="q8" value="C"> I bisamhällen</label></li>
+                        <li><label><input type="radio" name="q8" value="D"> I bikupor</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 9: Vad görs honung av?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q9" value="A"> Pollen</label></li>
+                        <li><label><input type="radio" name="q9" value="B"> Getingar</label></li>
+                        <li><label><input type="radio" name="q9" value="C"> Socker</label></li>
+                        <li><label><input type="radio" name="q9" value="D"> Nektar</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-3" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(3, ['q7', 'q8', 'q9'], 4)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-4">
+            <div class="text-column">
+                <h2>Text 4: Recept Sockerkaka</h2>
+                <p>Att baka är roligt och enkelt! Du behöver bara sju ingredienser, två skålar, en kakform och en ugn. Innan du börjar måste du tänka på att ugnen kan bli väldigt varm, så fråga en vuxen om lov först. Här kommer en lista över vad du behöver:</p>
+                <ul>
+                    <li>2 ägg</li>
+                    <li>2 dl socker</li>
+                    <li>3 dl vetemjöl</li>
+                    <li>1.5 tsk bakpulver</li>
+                    <li>0.5 tsk vaniljsocker</li>
+                    <li>50 g smör</li>
+                    <li>1 dl mjölk</li>
+                </ul>
+                <p>1. Sätt ugnen på 175 grader. Vispa ihop ägg och strösocker i en skål tills blandningen blir vit.</p>
+                <p>2. I den andra skålen blandar du mjöl, bakpulver och vaniljsocker. Rör om ordentligt.</p>
+                <p>3. Smält smöret i en kastrull och häll sedan i mjölken, för att allt ska bli ljummet. Rör ner blandningen med äggblandningen. Häll sedan i de torra ingredienserna från den andra skålen, och rör om till en jämn smet.</p>
+                <p>4. Häll ner smeten i formen och ställ formen i ugnen i 30 minuter. Kontrollera att kakan är klar genom att sticka ner en tandpetare i formen. Om tandpetaren är torr när du drar ut den är kakan klar!</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 10: Vilken ingrediens ingår inte i receptet?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q10" value="A"> Socker</label></li>
+                        <li><label><input type="radio" name="q10" value="B"> Jäst</label></li>
+                        <li><label><input type="radio" name="q10" value="C"> Vetemjöl</label></li>
+                        <li><label><input type="radio" name="q10" value="D"> Smör</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 11: Hur länge ska du vispa ägg och socker?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q11" value="A"> Tills smöret smälter</label></li>
+                        <li><label><input type="radio" name="q11" value="B"> Tills smeten blir vit</label></li>
+                        <li><label><input type="radio" name="q11" value="C"> Tills det blir en kaka</label></li>
+                        <li><label><input type="radio" name="q11" value="D"> I 30 minuter</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 12: Hur vet du om sockerkakan är klar?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q12" value="A"> Det sitter en tandpetare i kakan</label></li>
+                        <li><label><input type="radio" name="q12" value="B"> Kakan har fått en fin färg</label></li>
+                        <li><label><input type="radio" name="q12" value="C"> Kakan är härligt kladdig</label></li>
+                        <li><label><input type="radio" name="q12" value="D"> Kakan är inte längre kladdig</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-4" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(4, ['q10', 'q11', 'q12'], 5)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-5">
+            <div class="text-column">
+                <h2>Text 5: Vädret i februari</h2>
+                <p>Februari blev en mycket händelserik månad för vädret i Sverige. Tre stora oväder gav mycket regn och blåst i söder. Trots alla oväder var det varmare än normalt i hela landet. Jämfört med åren 1961-1990 blev februari i snitt 3-7 grader varmare. Högst temperaturer var det i Svealand och Norrland.</p>
+                <p>Det föll mer nederbörd än normalt i stora delar av landet. Det var mest regn, men också lite snö. Det var bara Norrland som inte fick så mycket nederbörd. I Götaland kom det mycket mer än normalt. På vissa platser där kom det rekordmycket.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 13: I vilken del av landet var det både varmare och torrare än normalt?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q13" value="A"> I Norrland</label></li>
+                        <li><label><input type="radio" name="q13" value="B"> I Götaland</label></li>
+                        <li><label><input type="radio" name="q13" value="C"> I Svealand</label></li>
+                        <li><label><input type="radio" name="q13" value="D"> I hela landet</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 14: Vad betyder ordet nederbörd?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q14" value="A"> Vatten i olika former som kommer från molnen</label></li>
+                        <li><label><input type="radio" name="q14" value="B"> Regn</label></li>
+                        <li><label><input type="radio" name="q14" value="C"> Snö</label></li>
+                        <li><label><input type="radio" name="q14" value="D"> Snöblandat regn</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 15: Hur var vädret i februari?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q15" value="A"> Ovanligt kallt och blött</label></li>
+                        <li><label><input type="radio" name="q15" value="B"> Snöigt och soligt</label></li>
+                        <li><label><input type="radio" name="q15" value="C"> Torrt och kallt</label></li>
+                        <li><label><input type="radio" name="q15" value="D"> Ovanligt varmt och blött</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-5" class="error-message">Du måste svara på alla frågor innan du can gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(5, ['q13', 'q14', 'q15'], 6)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-6">
+            <div class="text-column">
+                <h2>Text 6: Astrid Lindgren</h2>
+                <p>Astrid Lindgren föddes i november 1907 och dog i januari 2002. Hon är en av Sveriges mest omtyckta författare och har skrivit böckerna om Pippi Långstrump, Karlsson på taket och Emil i Lönneberga.</p>
+                <p>Hon växte upp i Småland med sin mamma och pappa och sina tre syskon Gunnar, Stina och Ingegerd. De lekte mycket tillsammans när de var små men de hjälpte också till med lantbruket på sina föräldrars bondgård.</p>
+                <p>Astrid flyttade till Stockholm för att utbilda sig till sekreterare. Hon skaffade familj när hon var 23 och när hennes barn var små brukade hon hitta på egna sagor som hon berättade för dem. En dag ville hennes dotter att hon skulle berätta om en flicka som hette Pippi Långstrump. Astrid hade aldrig hört det namnet men började berätta om Pippi som bodde i Villa Villekulla med en häst på verandan.</p>
+                <p>Astrid började skriva böcker när hon var 37 år gammal. Första gången hon skickade in en bok till ett förlag så var de inte intresserade. Men Astrid gav inte upp, utan skickade fler böcker till fler förlag tills de till slut publicerade hennes verk. Hon skrev böcker fram till 1992, och skrev totalt över 70 böcker. Idag hittar du Astrids ansikte på de nya 20-lapparna, som ett bevis på hur populär hon är i Sverige.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 16: När på året är Astrid född?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q16" value="A"> På sommaren</label></li>
+                        <li><label><input type="radio" name="q16" value="B"> På hösten</label></li>
+                        <li><label><input type="radio" name="q16" value="C"> På våren</label></li>
+                        <li><label><input type="radio" name="q16" value="D"> I Småland</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 17: Vem hittade på namnet Pippi?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q17" value="A"> Astrids syster</label></li>
+                        <li><label><input type="radio" name="q17" value="B"> Astrids mamma</label></li>
+                        <li><label><input type="radio" name="q17" value="C"> Astrid Lindgren</label></li>
+                        <li><label><input type="radio" name="q17" value="D"> Astrids dotter</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 18: Varför är Astrid på sedlarna?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q18" value="A"> För att Pippi är så populär</label></li>
+                        <li><label><input type="radio" name="q18" value="B"> För hon skrev så många böcker</label></li>
+                        <li><label><input type="radio" name="q18" value="C"> För hon blev så gammal</label></li>
+                        <li><label><input type="radio" name="q18" value="D"> För att hon är så omtyckt i Sverige</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-6" class="error-message">Du måste svara på alla frågor innan du kan avsluta Läs 3!</div>
+                <button type="button" class="submit-btn" onclick="validateAndFinishL3(6, ['q16', 'q17', 'q18'], 7)">Gå vidare till Läs 4</button>
+            </div>
+        </div>
+
+
+        <div class="container" id="test-part-7">
+            <div class="text-column">
+                <h2>Del 1</h2>
+                <p>Samira väntar på Herman i hörnet av parkeringen vid Boris Livs. Klockan är halv sju och han borde ha varit här för en kvart sedan. Vid ett av höghusen ser hon en gestalt komma cyklande. Hon känner igen Hermans sätt att trampa på pedalerna; snabbt, ryckigt och kraftfullt på en och samma gång. ”Du menade allvar med utmaningen”, säger Herman när han bromsar in bredvid Samira. ”Du är sen”, svarar Samira och hoppar upp på sin cykel. ”Rundan väntar”.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 19: Var står Samira och väntar på Herman?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q19" value="A"> vid en affär</label></li>
+                        <li><label><input type="radio" name="q19" value="B"> i skogen</label></li>
+                        <li><label><input type="radio" name="q19" value="C"> vid Rundan</label></li>
+                        <li><label><input type="radio" name="q19" value="D"> vid ett av höghusen</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 20: När kom Herman fram?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q20" value="A"> i tid</label></li>
+                        <li><label><input type="radio" name="q20" value="B"> för sent</label></li>
+                        <li><label><input type="radio" name="q20" value="C"> inte alls</label></li>
+                        <li><label><input type="radio" name="q20" value="D"> för tidigt</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 21: Hur känner Samira igen Herman?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q21" value="A"> på sättet han cyklar</label></li>
+                        <li><label><input type="radio" name="q21" value="B"> hon känner inte igen honom</label></li>
+                        <li><label><input type="radio" name="q21" value="C"> på sättet han pratar</label></li>
+                        <li><label><input type="radio" name="q21" value="D"> på sättet han klär sig</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-7" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(7, ['q19', 'q20', 'q21'], 8)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-8">
+            <div class="text-column">
+                <h2>Del 2</h2>
+                <p>Rundan är en trixig och svårcyklad bana med branta backar, vassa stenar och leriga kurvor som ligger en bit in i skogen. Den som lyckas bemästra Rundan bäst på cykel åtnjuter alltid de andras beundran. Men det är inte för att bli beundrad som Samira har utmanat Herman, utan för att få tyst på honom. Samira är så trött på hans skryt om hur bra han är på fotboll, teckning, pannkaksätning och multiplikationstabellen. Listan på saker som Herman anser att han är bäst på kan göras hur lång som helst.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 22: Vad är Rundan för någonting?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q22" value="A"> en cykelbana i skogen</label></li>
+                        <li><label><input type="radio" name="q22" value="B"> en cykelbana en bit utanför skogen</label></li>
+                        <li><label><input type="radio" name="q22" value="C"> en parkeringsplats</label></li>
+                        <li><label><input type="radio" name="q22" value="D"> en rund kulle i skogen</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 23: Vad händer om man är snabbast på att cykla Rundan?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q23" value="A"> andra vill bemästra banan</label></li>
+                        <li><label><input type="radio" name="q23" value="B"> andra vill utmana en</label></li>
+                        <li><label><input type="radio" name="q23" value="C"> andra blir imponerade</label></li>
+                        <li><label><input type="radio" name="q23" value="D"> andra blir avundsjuka</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 24: Varför har Samira utmanat Herman på Rundan?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q24" value="A"> hon vill bevisa att hon är bäst</label></li>
+                        <li><label><input type="radio" name="q24" value="B"> hon vill sätta Herman på plats</label></li>
+                        <li><label><input type="radio" name="q24" value="C"> hon gillar att tävla</label></li>
+                        <li><label><input type="radio" name="q24" value="D"> hon vill bli beundrad</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-8" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(8, ['q22', 'q23', 'q24'], 9)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-9">
+            <div class="text-column">
+                <h2>Del 3</h2>
+                <p>”Den som cyklar Rundan fortast vinner”, säger Samira och rättar till cykelhjälmen. Bredvid henne sitter Herman redo på sin cykel. Den har fler växlar än hennes och hjulen är bättre anpassade för terrängcykling. Ändå tänker Samira att hon har en chans att slå honom, bara hon kan behålla lugnet. Så går starten och Herman susar med full kraft ner för den första backen. Samira lägger sig tätt bakom honom trots att det skvätter av sand och sten från hans bakdäck i ansiktet på henne.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 25: På vilket sätt är Hermans cykel bättre än Samiras?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q25" value="A"> den har färre växlar</label></li>
+                        <li><label><input type="radio" name="q25" value="B"> den har smalare däck</label></li>
+                        <li><label><input type="radio" name="q25" value="C"> den har bättre växlar</label></li>
+                        <li><label><input type="radio" name="q25" value="D"> den har bättre däck</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 26: Vad tror Samira krävs för att vinna över Herman?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q26" value="A"> att hon trampar fortast</label></li>
+                        <li><label><input type="radio" name="q26" value="B"> att hon tar täten tidigt i loppet</label></li>
+                        <li><label><input type="radio" name="q26" value="C"> att hennes cykel fungerar bättre än Hermans</label></li>
+                        <li><label><input type="radio" name="q26" value="D"> att hon inte stressar upp sig</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 27: Varför kan det vara dumt att ligga tätt bakom någon i Rundans första nedförsbacke?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q27" value="A"> det går inte att köra om i nedförsbacken</label></li>
+                        <li><label><input type="radio" name="q27" value="B"> man riskerar att göra illa sig av flygande grus</label></li>
+                        <li><label><input type="radio" name="q27" value="C"> man kan kollidera med varandra</label></li>
+                        <li><label><input type="radio" name="q27" value="D"> det är svårt att se vägen som är kurvig och gropig</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-9" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(9, ['q25', 'q26', 'q27'], 10)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-10">
+            <div class="text-column">
+                <h2>Del 4</h2>
+                <p>Efter backen svänger stigen tvärt åt vänster. Samira är tvungen att sätta ner foten i marken för att inte ramla, vilket utökar Hermans försprång ännu mer. Stigen snirklar sig framåt med vassa stenar och hala rötter och Samira måste koncentrera sig ordentligt för att inte köra omkull. Nästa backe avslutas med ett hopp. Samira ser att Herman flyger långt. Hon trampar så hårt hon kan, men lyckas ändå inte flyga lika långt.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 28: Vad gjorde att Hermans ledning ökade?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q28" value="A"> stigen svängde plötsligt kraftigt</label></li>
+                        <li><label><input type="radio" name="q28" value="B"> Samira ramlade omkull</label></li>
+                        <li><label><input type="radio" name="q28" value="C"> Herman höjde tempot</label></li>
+                        <li><label><input type="radio" name="q28" value="D"> stigen hade hala rötter och vassa stenar</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 29: Varför är Samira tvungen att koncentrera sig extra mycket på den snirkliga stigen?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q29" value="A"> hon börjar bli trött</label></li>
+                        <li><label><input type="radio" name="q29" value="B"> hon vill inte krocka med Herman</label></li>
+                        <li><label><input type="radio" name="q29" value="C"> marken är svår att cykla på</label></li>
+                        <li><label><input type="radio" name="q29" value="D"> Herman börjar komma ikapp henne</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 30: Hur skiljer sig Hermans hopp från Samiras?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q30" value="A"> det är högre</label></li>
+                        <li><label><input type="radio" name="q30" value="B"> det är kortare</label></li>
+                        <li><label><input type="radio" name="q30" value="C"> det är lägre</label></li>
+                        <li><label><input type="radio" name="q30" value="D"> det är längre</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-10" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(10, ['q28', 'q29', 'q30'], 11)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-11">
+            <div class="text-column">
+                <h2>Del 5</h2>
+                <p>”Du hinner aldrig ikapp mig!” ropar Herman när de möts på tillbakavägen. Samira svarar inte utan gör en snabb vändning vid stora eken och tar sikte på Hermans rygg. Trotz att Herman är långt före tänker hon inte ge upp. Rundan avslutas med en tvärbrant uppförsbacke. Samira vet att backen är hennes sista chans. Hon tar ett djupt andetag och samlar alla sina krafter för att hinna ifatt Herman, som nu är halvvägs uppe i backen.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 31: Hur känner sig Herman när han möter Samira på tillbakavägen?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q31" value="A"> modig</label></li>
+                        <li><label><input type="radio" name="q31" value="B"> självsäker</label></li>
+                        <li><label><input type="radio" name="q31" value="C"> irriterad</label></li>
+                        <li><label><input type="radio" name="q31" value="D"> osäker</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 32: Hur förbereder sig Samira inför sista backen?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q32" value="A"> hon andas långsammare för att få mer fart</label></li>
+                        <li><label><input type="radio" name="q32" value="B"> hon försöker hitta krafter inom sig för att orka</label></li>
+                        <li><label><input type="radio" name="q32" value="C"> hon andas fortare för att skapa mer energi</label></li>
+                        <li><label><input type="radio" name="q32" value="D"> hon växlar upp för att få mer kraft i trampningen</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 33: Varför ger inte Samira upp, trots att Herman leder stort?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q33" value="A"> för att hon vet att det fortfarande finns en möjlighet att slå Herman</label></li>
+                        <li><label><input type="radio" name="q33" value="B"> för att hon vill ta sig ända in i mål även om hon förlorar</label></li>
+                        <li><label><input type="radio" name="q33" value="C"> för att hon hoppas att Herman ska cykla omkull</label></li>
+                        <li><label><input type="radio" name="q33" value="D"> för att hon vill visa Herman att hon inte är en person som ger upp</label></li>
+                    </ul>
+                </div>
+
+                <div id="error-11" class="error-message">Du måste svara på alla frågor innan du kan gå vidare!</div>
+                <button type="button" class="next-btn" onclick="validateAndSwitch(11, ['q31', 'q32', 'q33'], 12)">Nästa text &rarr;</button>
+            </div>
+        </div>
+
+        <div class="container" id="test-part-12">
+            <div class="text-column">
+                <h2>Del 6</h2>
+                <p>Det bränner i Samiras ben av trötthet men hon fortsätter ändå att trampa. Plötsligt är hon ifatt! Herman är precis framför henne. Han står nästan stilla i backen. Med en sista kraftansträngning vräker hon cykeln över mållinjen, faller omkull och ligger sedan på rygg med cykeln bredvid sig och flämtar efter luft. Hjärtat pumpar som en vild hammare i bröstet på henne. "Du hade tur i backen", säger Herman. "Mina växlar strulade". Han hoppar upp på sin cykel och cyklar bort genom skogen utan att säga hejdå. Samira ligger kvar en lång stund. Sedan skriker hon rakt ut. Ett befriande segertjut som hörs genom skogen, ända bort till höghusen.</p>
+            </div>
+
+            <div class="quiz-column">
+                <div class="question-block">
+                    <div class="question-title">Fråga 34: Hur lyckades Samira komma ifatt Herman i uppförsbacken, enligt honom själv?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q34" value="A"> han hade otur och fick punktering</label></li>
+                        <li><label><input type="radio" name="q34" value="B"> han fick problem med växlarna</label></li>
+                        <li><label><input type="radio" name="q34" value="C"> han blev trött i benen</label></li>
+                        <li><label><input type="radio" name="q34" value="D"> hon var starkast när det gällde</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 35: Hur beter sig Herman efter loppet?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q35" value="A"> som en ödmjuk vinnare</label></li>
+                        <li><label><input type="radio" name="q35" value="B"> som en dålig vinnare</label></li>
+                        <li><label><input type="radio" name="q35" value="C"> som en dålig förlorare</label></li>
+                        <li><label><input type="radio" name="q35" value="D"> som en ödmjuk förlorare</label></li>
+                    </ul>
+                </div>
+
+                <div class="question-block">
+                    <div class="question-title">Fråga 36: Hur känner sig Samira efter loppet?</div>
+                    <ul class="options-list">
+                        <li><label><input type="radio" name="q36" value="A"> utmattad och ledsen</label></li>
+                        <li><label><input type="radio" name="q36" value="B"> utmattad och lycklig</label></li>
+                        <li><label><input type="radio" name="q36" value="C"> tursam och lycklig</label></li>
+                        <li><label><input type="radio" name="q36" value="D"> ensam och övergiven</label></li>
+                    </ul>
+                </div>
+
+                <div class="student-info-block">
+                    <label for="student-name">Elevens för- och efternamn:</label>
+                    <input type="text" id="student-name" placeholder="Skriv ditt fullständiga namn...">
+
+                    <label for="student-class">Klass:</label>
+                    <input type="text" id="student-class" placeholder="T.ex. 3A, 4B...">
+                </div>
+
+                <div id="error-12" class="error-message">Du måste svara på alla frågor samt fylla i namn och klass!</div>
+                <button type="button" class="submit-btn" onclick="validateAndSubmitAll(12, ['q34', 'q35', 'q36'])">Skicka in</button>
+            </div>
+        </div>
+
+    </form>
+
+    <script>
+        const startTime = new Date();
+
+        function validateAndSwitch(currentPart, questions, nextPart) {
+            let allAnswered = true;
+
+            questions.forEach(q => {
+                const checked = document.querySelector(`input[name="${q}"]:checked`);
+                if (!checked) {
+                    allAnswered = false;
                 }
-            };
+            });
+
+            const errorMsg = document.getElementById(`error-${currentPart}`);
+
+            if (allAnswered) {
+                errorMsg.style.display = 'none';
+                
+                document.querySelectorAll('.container').forEach(container => {
+                    container.classList.remove('active');
+                });
+                document.getElementById(`test-part-${nextPart}`).classList.add('active');
+                window.scrollTo(0, 0);
+            } else {
+                errorMsg.style.display = 'block';
+            }
         }
 
-        list.appendChild(div);
-    });
-}
-</script>
+        function validateAndFinishL3(currentPart, questions, nextPart) {
+            let allAnswered = true;
 
+            questions.forEach(q => {
+                const checked = document.querySelector(`input[name="${q}"]:checked`);
+                if (!checked) {
+                    allAnswered = false;
+                }
+            });
+
+            const errorMsg = document.getElementById(`error-${currentPart}`);
+
+            if (allAnswered) {
+                errorMsg.style.display = 'none';
+                
+                const navL4 = document.getElementById('nav-l4');
+                navL4.removeAttribute('disabled');
+                
+                forceTabSwitch('l4');
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function validateAndSubmitAll(currentPart, lastQuestions) {
+            let allAnswered = true;
+
+            lastQuestions.forEach(q => {
+                const checked = document.querySelector(`input[name="${q}"]:checked`);
+                if (!checked) {
+                    allAnswered = false;
+                }
+            });
+
+            const nameInput = document.getElementById('student-name').value.trim();
+            const classInput = document.getElementById('student-class').value.trim();
+
+            if (nameInput === "" || classInput === "") {
+                allAnswered = false;
+            }
+
+            const errorMsg = document.getElementById(`error-${currentPart}`);
+
+            if (allAnswered) {
+                errorMsg.style.display = 'none';
+                sendAnswers(nameInput, classInput);
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        function sendAnswers(name, studentClass) {
+            // Här ligger den senaste fungerande Google Script-länken installerad
+            const googleScriptUrl = "https://script.google.com/macros/s/AKfycbx0Ibsp5pY5_rUSvmJGGNxHf0J8cwPfjAGwU_uFe2P_OkoJjaIx0JfcCXCqupF5QHV3/exec"; 
+
+            const formElement = document.getElementById('mega-quiz-form');
+            const formData = new FormData(formElement);
+            
+            const studentAnswers = {};
+            for (let [key, value] of formData.entries()) {
+                if(key.startsWith('q')) {
+                    studentAnswers[key] = value;
+                }
+            }
+
+            const facitL3 = { q1:"C", q2:"D", q3:"A", q4:"B", q5:"D", q6:"A", q7:"B", q8:"A", q9:"D", q10:"B", q11:"B", q12:"D", q13:"A", q14:"A", q15:"D", q16:"B", q17:"D", q18:"D" };
+            const facitL4 = { q19:"A", q20:"B", q21:"A", q22:"A", q23:"C", q24:"B", q25:"C", q26:"D", q27:"B", q28:"A", q29:"C", q30:"D", q31:"B", q32:"B", q33:"A", q34:"B", q35:"C", q36:"B" };
+
+            let pointsL3 = 0;
+            const totalL3 = Object.keys(facitL3).length; 
+            for (let q in facitL3) {
+                if (studentAnswers[q] === facitL3[q]) pointsL3++;
+            }
+
+            let pointsL4 = 0;
+            const totalL4 = Object.keys(facitL4).length; 
+            for (let q in facitL4) {
+                if (studentAnswers[q] === facitL4[q]) pointsL4++;
+            }
+
+            const endTime = new Date();
+            const timeDifferenceInSeconds = Math.floor((endTime - startTime) / 1000);
+            const minutes = Math.floor(timeDifferenceInSeconds / 60);
+            const seconds = timeDifferenceInSeconds % 60;
+            const timeString = `${minutes} min ${seconds} sek`;
+
+            const payload = {
+                name: name,
+                class: studentClass,
+                timestamp: new Date().toLocaleString('sv-SE'),
+                duration: timeString,
+                scoreL3: `${pointsL3}/${totalL3}`,
+                scoreL4: `${pointsL4}/${totalL4}`,
+                answers: studentAnswers
+            };
+
+            alert("Svaren skickas nu. Klicka OK för att slutföra.");
+
+            // HÄR KÖRS "no-cors" SOM GÖR ATT WEBBLÄSAREN INTE BLOCKERAR UTB-DOMÄNEN
+            fetch(googleScriptUrl, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                alert("Tack! Dina svar och resultat har skickats till din lärare!✅.");
+            })
+            .catch(error => {
+                alert("Ett fel har uppstått. Kolla med din lärare!");
+            });
+        }
+
+        function forceTabSwitch(tabName) {
+            const navL3 = document.getElementById('nav-l3');
+            const navL4 = document.getElementById('nav-l4');
+
+            document.querySelectorAll('.container').forEach(container => {
+                container.classList.remove('active');
+            });
+
+            if (tabName === 'l3') {
+                navL3.classList.add('active');
+                navL4.classList.remove('active');
+                document.getElementById('test-part-1').classList.add('active');
+            } else if (tabName === 'l4') {
+                navL4.classList.add('active');
+                navL3.classList.remove('active');
+                document.getElementById('test-part-7').classList.add('active');
+            }
+            window.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
